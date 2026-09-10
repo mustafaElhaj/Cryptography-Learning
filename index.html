@@ -1,560 +1,517 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة اختبار التشفير وفك التشفير - Vigenère</title>
- 
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
- 
-  <!-- Google Font: Cairo -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة اختبار التشفير وفك التشفير - Vigenere</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="sust.jpg" type="image/png">
 
-  <style>
-    /* Palette: Black (#0d1117), White (#ffffff), Blue (#1d4ed8), Teal-Blue (#0d9488) */
-    :root {
-      --bg-color: #0d1117;
-      --card-bg: #161b22;
-      --text-color: #ffffff;
-      --blue-color: #1d4ed8;
-      --blue-hover: #1e40af;
-      --teal-color: #0d9488;
-      --teal-hover: #0f766e;
-      --border-color: #30363d;
-    }
 
-    body {
-      font-family: 'Cairo', sans-serif;
-      /* background-color: var(--bg-color); */
-      background-image: url(sust.jpg);
-      
-      background-size: cover;
-      background-position: right;
-      color: var(--text-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #ffffff;
+            --blue-color: #0e2d81;
+            --blue-hover: #1840c5;
+            --teal-color: #0d9488;
+            --teal-hover: #0f766e;
+            --border-color: #30363d;
+        }
 
-    .container {
-      background-color: var(--card-bg);
-      background-color: rgba(15, 4, 4, 0.678);
-      backdrop-filter: blur(5px);
-      /* border: 1px solid var(--border-color); */
-      border-radius: 12px;
-      padding: 30px;
-      width: 100%;
-      max-width: 550px;
-      box-shadow: 0 10px 30px rgba(126, 125, 125, 0.5);
-      position: relative;
-      margin: 0 20px;
-    }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-image: url('sust.jpg');
+            background-size: cover;
+            background-position: center;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-    h1, h2 {
-      text-align: center;
-      margin-top: 0;
-    }
+        .container {
+            background-color: rgba(15, 4, 4, 0.678);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 10px 30px rgba(126, 125, 125, 0.5);
+            position: relative;
+            margin: 0 20px;
+        }
 
-    h1 {
+        h1,
+        h2 {
+            text-align: center;
+            margin-top: 0;
+        }
 
-      font-size: 28px;
-      color: var(--text-color);
-      /* color: brown; */
-      margin-bottom: 15px;
-      max-width: 90%;
-      margin: auto;
-    }
+        h1 {
+            font-size: 28px;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            max-width: 90%;
+            margin: auto;
+        }
 
-    .notice {
-      background-color: rgba(22, 12, 9, 0.767);
-      border-right: 4px solid var(--blue-color);
-      color: var(--text-color);
-      padding: 20px 10px;
-      border-radius: 6px;
-      font-size: 14px;
-      line-height: 1.6;
-      margin: 45px 0;
-    }
+        .notice {
+            background-color: rgba(22, 12, 9, 0.767);
+            border-right: 4px solid var(--blue-color);
+            color: var(--text-color);
+            padding: 20px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 45px 0;
+        }
 
-    .mode-selection {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
+        .mode-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-    .mode-card {
-      background: var(--bg-color);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 20px;
-      cursor: pointer;
-      transition: border-color 0.3s, transform 0.2s;
-      text-align: center;
-      /* backdrop-filter: blur(1px); */
-      background-color: rgba(2, 5, 22, 0.493);
-    }
+        .mode-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: border-color 0.3s, transform 0.2s;
+            text-align: center;
+            background-color: rgba(2, 5, 22, 0.493);
+        }
 
-    .mode-card:hover {
-      border-color: var(--blue-color);
-      transform: translateY(-2px);
-    }
+        .mode-card:hover {
+            border-color: var(--blue-color);
+            transform: translateY(-2px);
+        }
 
-    .mode-card h3 {
-      margin: 0 0 18px 0;
-      font-size: 22px;
-      font-weight: bold;
-      text-align: center;
-      gap: 10px;
-    }
+        .mode-card h3 {
+            margin: 0 0 18px 0;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            gap: 10px;
+        }
 
-    .mode-card p {
-      margin: 0;
-      font-size: 13px;
-      color: #8b949e;
-      line-height: 1.5;
-    }
+        .algo{
+            color: var(--blue-hover);
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin: 0 5px;
+        }
 
-    /* Transition Screens */
-    .view {
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
+        .mode-card p {
+            margin: 0;
+            font-size: 13px;
+            color: #8b949e;
+            line-height: 1.5;
+        }
 
-    .hidden {
-      display: none !important;
-      opacity: 0;
-      transform: scale(0.95);
-    }
+        .view {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
 
-    .fade-in {
-      opacity: 1;
-      transform: scale(1);
-    }
+        .hidden {
+            display: none !important;
+            opacity: 0;
+            transform: scale(0.95);
+        }
 
-    /* Form UI */
-    .nav-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-direction: row-reverse;
-      margin-bottom: 30px;
-      border-bottom: 1px solid var(--text-color);
-      padding-bottom: 10px;
-    }
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: row-reverse;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--text-color);
+            padding-bottom: 10px;
+        }
 
-    .btn-back {
-      background: transparent;
-      border: 1px solid var(--text-color);
-      color: var(--text-color);
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-family: inherit;
-      transition: 0.5s;
-      background-color: var(--blue-hover);
-      border-color: var(--bg-color);
-    }
+        .btn-back {
+            background: var(--blue-hover);
+            border: 1px solid var(--bg-color);
+            color: var(--text-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.5s;
+        }
 
-    .btn-back:hover {
-      background-color: var(--blue-color);
-      transform: translateX(-2px);
-    }
+        .btn-back:hover {
+            background-color: var(--blue-color);
+            transform: translateX(-2px);
+        }
 
-    label {
-      display: block;
-      margin-top: 15px;
-      margin-bottom: 8px;
-      font-weight: 600;
-      font-size: 14px;
-    }
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
 
-    /* Drag and Drop Zone */
-    .drop-zone {
-      border: 2px dashed var(--border-color);
-      border-radius: 8px;
-      padding: 25px;
-      text-align: center;
-      background-color: rgba(2, 5, 22, 0.493);
-      cursor: pointer;
-      transition: border-color 0.3s;
-    }
+        .drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            background-color: rgba(2, 5, 22, 0.493);
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
 
-    .drop-zone:hover, .drop-zone.dragover {
-      border-color: var(--blue-color);
-    }
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--blue-color);
+        }
 
-    .drop-zone i {
-      font-size: 28px;
-      color: #8b949e;
-      margin-bottom: 8px;
-    }
+        .drop-zone i {
+            font-size: 28px;
+            color: #8b949e;
+            margin-bottom: 8px;
+        }
 
-    .drop-zone p {
-      margin: 0;
-      font-size: 13px;
-      color: #8b949e;
-    }
+        .drop-zone p {
+            margin: 0;
+            font-size: 13px;
+            color: #8b949e;
+        }
 
-    .file-info {
-      margin-top: 8px;
-      font-weight: 600;
-      color: var(--text-color);
-    }
+        .file-info {
+            margin-top: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
 
-    /* Key Input */
-    .key-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
+        .key-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
 
-    input[type="password"], input[type="text"] {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      background-color: rgba(2, 5, 22, 0.493);
-      color: var(--text-color);
-      font-family: inherit;
-      box-sizing: border-box;
-      transition: 0.6s;
-    }
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: rgba(2, 5, 22, 0.493);
+            color: var(--text-color);
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: 0.6s;
+        }
 
-    .key-wrapper input {
-      padding-left: 45px;
-    }
+        .key-wrapper input {
+            padding-left: 45px;
+        }
 
-    .toggle-btn {
-      position: absolute;
-      left: 10px;
-      background: transparent;
-      border: none;
-      color: #8b949e;
-      cursor: pointer;
-    }
+        .toggle-btn {
+            position: absolute;
+            left: 10px;
+            background: transparent;
+            border: none;
+            color: #8b949e;
+            cursor: pointer;
+        }
 
-    /* Buttons */
-    button.action-btn {
-      width: 100%;
-      padding: 12px;
-      border-radius: 6px;
-      border: none;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      margin-top: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: background-color 0.2s;
-    }
+        button.action-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
 
-    .btn-blue {
-      background-color: var(--blue-color);
-      color: var(--text-color);
-      margin:auto;
-      max-width: 60%;
-    }
-    .btn-blue:hover { background-color: var(--blue-hover); }
+        .btn-blue {
+            background-color: var(--blue-color);
+            color: var(--text-color);
+            margin: auto;
+            max-width: 60%;
+        }
 
-    .btn-teal {
-      background-color: var(--teal-color);
-      color: var(--text-color);
-      margin:auto;
-      max-width: 60%;
-    }
-    .btn-teal:hover { background-color: var(--teal-hover); }
+        .btn-blue:hover {
+            background-color: var(--blue-hover);
+        }
 
-    .btn-secondary {
-      border: 1px solid var(--border-color);
-      color: var(--bg-color);
-      margin:auto;
-      max-width: 60%;
-      transition: 0.6s;
-    }
-    .btn-secondary:hover { background-color: var(--border-color); color: var(--text-color);}
+        .btn-teal {
+            background-color: var(--teal-color);
+            color: var(--text-color);
+            margin: auto;
+            max-width: 60%;
+        }
 
-    #status {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 6px;
-      text-align: center;
-      display: none;
-      font-size: 14px;
-      border: 1px solid transparent;
-    }
+        .btn-teal:hover {
+            background-color: var(--teal-hover);
+        }
 
-    .status-success {
-      background: rgba(13, 148, 136, 0.15);
-      color: #2dd4bf;
-      border-color: var(--teal-color) !important;
-    }
+        .btn-secondary {
+            border: 1px solid var(--border-color);
+            color: var(--bg-color);
+            margin: auto;
+            max-width: 60%;
+            transition: 0.6s;
+        }
 
-    .status-error {
-      background: rgba(220, 38, 38, 0.15);
-      color: #f87171;
-      border-color: #dc2626 !important;
-    }
-  </style>
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        #status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            display: none;
+            font-size: 14px;
+            border: 1px solid transparent;
+        }
+
+        .status-success {
+            background: rgba(13, 148, 136, 0.15);
+            color: #2dd4bf;
+            border-color: var(--teal-color) !important;
+        }
+
+        .status-error {
+            background: rgba(220, 38, 38, 0.15);
+            color: #f87171;
+            border-color: #dc2626 !important;
+        }
+    </style>
 </head>
+
 <body>
 
-  <div class="container">
-   
-    <!-- الشاشة الترحيبية -->
-    <div id="welcomeView" class="view">
-      <h1>مرحباً بك في منصة اختبار التشفير وفك التشفير</h1>
-     
-      <div class="notice">
-        <i class="fa-solid fa-circle-info"></i>
-        <strong>ملاحظة:</strong> الهدف من المنصة تعليمي ولتطبيق الفهم النظري لكيفية عمل خوارزميات التشفير المتماثل، وليس الاستخدام في بيئة حقيقية.
-      </div>
-
-      <div class="mode-selection">
-        <div class="mode-card" onclick="switchView('encrypt')">
-          <h3 style="color: #60a5fa;"><i class="fa-solid fa-lock"></i> تشفير ملف</h3>
-          <p>يدعم تشفير المستندات النصية (.txt)، أوراق العمل، الصور (.png, .jpg)، والملفات الثنائية من خلال معالجة البايتات عبر خوارزمية Vigenère.</p>
+    <div class="container">
+        <div id="welcomeView" class="view">
+            <h1>مرحباً بك في منصة اختبار التشفير وفك التشفير</h1>
+            <div class="notice">
+                <i class="fa-solid fa-circle-info"></i>
+                <strong>ملاحظة:</strong> الهدف من المنصة تعليمي ولتطبيق الفهم النظري لكيفية عمل خوارزميات التشفير
+                المتماثل، وليس الاستخدام في بيئة حقيقية.
+            </div>
+            <div class="mode-selection">
+                <div class="mode-card" onclick="switchView('encrypt')">
+                    <h3 style="color: #60a5fa;"><i class="fa-solid fa-lock"></i> تشفير ملف</h3>
+                    <p>يدعم تشفير المستندات النصية (.txt)، أوراق العمل، الصور (.png, .jpg)، والملفات الثنائية من خلال
+                        معالجة ال bytes عبر خوارزمية <span class="algo">Vigenere</span>.</p>
+                </div>
+                <div class="mode-card" onclick="switchView('decrypt')">
+                    <h3 style="color: #2dd4bf;"><i class="fa-solid fa-key"></i> فك تشفير ملف</h3>
+                    <p>إعادة الملفات المشفرة سابقاً إلى حالتها الأصلية باستخدام المفتاح السري المخصص مع مطابقة المحتوى الاصلي قبل التشفير.</p>
+                </div>
+            </div>
         </div>
 
-        <div class="mode-card" onclick="switchView('decrypt')">
-          <h3 style="color: #2dd4bf;"><i class="fa-solid fa-key"></i> فك تشفير ملف</h3>
-          <p>إعادة الملفات المشفرة سابقاً إلى حالتها الأصلية باستخدام المفتاح السري المخصص مع مطابقة البايتات التامة.</p>
+        <div id="actionView" class="view hidden">
+            <div class="nav-header">
+                <button class="btn-back" onclick="switchView('welcome')">
+                    <i class="fa-solid fa-arrow-right"></i> العودة
+                </button>
+                <h2 id="viewTitle" style="margin: 0; font-size: 18px;"></h2>
+            </div>
+
+            <label>1. اضف الملف المطلوبة تشفيره :</label>
+            <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <p>اضغط هنا لرفع الملف أو قم بسحبه وإسقاطه داخل المساحة</p>
+                <div class="file-info" id="fileInfo"></div>
+            </div>
+            <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(this.files)">
+
+            <label for="secretKey">2. المفتاح السري:</label>
+            <div class="key-wrapper">
+                <input type="password" id="secretKey" placeholder="أدخل المفتاح هنا...">
+                <button type="button" class="toggle-btn" onclick="toggleKeyVisibility()">
+                    <i class="fa-solid fa-eye" id="eyeIcon"></i>
+                </button>
+            </div>
+
+            <button type="button" id="btnRandomKey" class="action-btn btn-secondary" onclick="generateRandomKey()"
+                style="display: none;">
+                <i class="fa-solid fa-dice"></i> توليد مفتاح عشوائي 
+            </button>
+
+            <button type="button" id="btnSubmit" class="action-btn" onclick="processFile()"></button>
+            <div id="status"></div>
         </div>
-      </div>
     </div>
 
-    <!-- واجهة التشفير وفك التشفير -->
-    <div id="actionView" class="view hidden">
-      <div class="nav-header">
-        <button class="btn-back" onclick="switchView('welcome')">
-          <i class="fa-solid fa-arrow-right"></i> العودة
-        </button>
-        <h2 id="viewTitle" style="margin: 0; font-size: 18px;"></h2>
-      </div>
+    <script>
+        let currentMode = '';
+        let selectedFile = null;
 
-      <!-- Drag & Drop File Area -->
-      <label>1. حدد الملف المطلوبة معالجته:</label>
-      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-        <i class="fa-solid fa-cloud-arrow-up"></i>
-        <p>اضغط هنا لرفع الملف أو قم بسحبه وإسقاطه داخل مربع التحديد</p>
-        <div class="file-info" id="fileInfo"></div>
-      </div>
-      <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(this.files)">
+        function switchView(target) {
+            const welcomeView = document.getElementById('welcomeView');
+            const actionView = document.getElementById('actionView');
 
-      <!-- Key Area -->
-      <label for="secretKey">2. المفتاح السري:</label>
-      <div class="key-wrapper">
-        <input type="password" id="secretKey" placeholder="أدخل المفتاح هنا...">
-        <button type="button" class="toggle-btn" onclick="toggleKeyVisibility()">
-          <i class="fa-solid fa-eye" id="eyeIcon"></i>
-        </button>
-      </div>
+            clearStatus();
+            resetInputs();
 
-      <button type="button" id="btnRandomKey" class="action-btn btn-secondary" onclick="generateRandomKey()" style="display: none;">
-        <i class="fa-solid fa-dice"></i> توليد مفتاح عشوائي آمن
-      </button>
+            if (target === 'welcome') {
+                actionView.classList.add('hidden');
+                welcomeView.classList.remove('hidden');
+            } else {
+                currentMode = target;
+                welcomeView.classList.add('hidden');
+                actionView.classList.remove('hidden');
 
-      <!-- Action Button -->
-      <button type="button" id="btnSubmit" class="action-btn" onclick="processFile()"></button>
+                const viewTitle = document.getElementById('viewTitle');
+                const btnSubmit = document.getElementById('btnSubmit');
+                const btnRandomKey = document.getElementById('btnRandomKey');
 
-      <div id="status"></div>
-    </div>
-
-  </div>
-
-  <script>
-    let currentMode = '';
-    let selectedFile = null;
-
-    // التنقل بين الشاشات مع أنيميشن سلس
-    function switchView(target) {
-      const welcomeView = document.getElementById('welcomeView');
-      const actionView = document.getElementById('actionView');
-
-      clearStatus();
-      resetInputs();
-
-      if (target === 'welcome') {
-        actionView.classList.add('hidden');
-        welcomeView.classList.remove('hidden');
-      } else {
-        currentMode = target;
-        welcomeView.classList.add('hidden');
-        actionView.classList.remove('hidden');
-
-        const viewTitle = document.getElementById('viewTitle');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const btnRandomKey = document.getElementById('btnRandomKey');
-
-        if (currentMode === 'encrypt') {
-          viewTitle.innerText = "تشفير الملفات";
-          btnSubmit.className = "action-btn btn-blue";
-          btnSubmit.innerHTML = `<i class="fa-solid fa-lock"></i> البدء بالتشفير وتحميل الملف`;
-          btnRandomKey.style.display = "flex";
-        } else {
-          viewTitle.innerText = "فك تشفير الملفات";
-          btnSubmit.className = "action-btn btn-teal";
-          btnSubmit.innerHTML = `<i class="fa-solid fa-unlock"></i> فك التشفير وتحميل الملف`;
-          btnRandomKey.style.display = "none";
-        }
-      }
-    }
-
-    // إدارة منطقة السحب والإفلات
-    const dropZone = document.getElementById('dropZone');
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-      }, false);
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-      const files = e.dataTransfer.files;
-      handleFileSelect(files);
-    });
-
-    function handleFileSelect(files) {
-      if (files.length > 0) {
-        selectedFile = files[0];
-        document.getElementById('fileInfo').innerText = `تم اختيار: ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(1)} KB)`;
-      }
-    }
-
-    // توليد مفتاح عشوائي
-    function generateRandomKey() {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-      const randomValues = new Uint8Array(16);
-      window.crypto.getRandomValues(randomValues);
-     
-      let generatedKey = "";
-      for (let i = 0; i < 16; i++) {
-        generatedKey += chars[randomValues[i] % chars.length];
-      }
-     
-      const keyInput = document.getElementById('secretKey');
-      keyInput.value = generatedKey;
-     
-      if (keyInput.type === 'password') {
-        toggleKeyVisibility();
-      }
-     
-      showStatus("تم توليد مفتاح عشوائي جديد. يرجى حفظه لفك التشفير مستقبلاً.", "success");
-    }
-
-    // إظهار وإخفاء كلمة السر
-    function toggleKeyVisibility() {
-      const keyInput = document.getElementById('secretKey');
-      const eyeIcon = document.getElementById('eyeIcon');
-     
-      if (keyInput.type === 'password') {
-        keyInput.type = 'text';
-        eyeIcon.className = 'fa-solid fa-eye-slash';
-      } else {
-        keyInput.type = 'password';
-        eyeIcon.className = 'fa-solid fa-eye';
-      }
-    }
-
-    // معالجة الملف والتشفير / فك التشفير
-    function processFile() {
-      const keyInput = document.getElementById('secretKey').value;
-
-      if (!selectedFile) {
-        showStatus("الرجاء اختيار أو إسقاط ملف أولاً!", "error");
-        return;
-      }
-
-      if (!keyInput) {
-        showStatus("الرجاء إدخال المفتاح السري!", "error");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.readAsArrayBuffer(selectedFile);
-
-      reader.onload = function(e) {
-        const fileBytes = new Uint8Array(e.target.result);
-        const encoder = new TextEncoder();
-        const keyBytes = encoder.encode(keyInput);
-
-        let resultBytes;
-
-        if (currentMode === 'encrypt') {
-          resultBytes = encryptBytes(fileBytes, keyBytes);
-          downloadFile(resultBytes, "encrypted_" + selectedFile.name);
-          showStatus("اكتملت عملية التشفير وتحميل الملف بنجاح.", "success");
-        } else {
-          resultBytes = decryptBytes(fileBytes, keyBytes);
-          let newName = selectedFile.name.replace(/^encrypted_/, "decrypted_");
-          downloadFile(resultBytes, newName);
-          showStatus("اكتملت عملية فك التشفير وتحميل الملف الأصلي.", "success");
+                if (currentMode === 'encrypt') {
+                    viewTitle.innerText = "تشفير الملفات";
+                    btnSubmit.className = "action-btn btn-blue";
+                    btnSubmit.innerHTML = `<i class="fa-solid fa-lock"></i> البدء بالتشفير وتحميل الملف`;
+                    btnRandomKey.style.display = "flex";
+                } else {
+                    viewTitle.innerText = "فك تشفير الملفات";
+                    btnSubmit.className = "action-btn btn-teal";
+                    btnSubmit.innerHTML = `<i class="fa-solid fa-unlock"></i> فك التشفير وتحميل الملف`;
+                    btnRandomKey.style.display = "none";
+                }
+            }
         }
 
-        resetInputs();
-      };
-    }
+        const dropZone = document.getElementById('dropZone');
 
-    function encryptBytes(fileBytes, keyBytes) {
-      const result = new Uint8Array(fileBytes.length);
-      for (let i = 0; i < fileBytes.length; i++) {
-        const keyByte = keyBytes[i % keyBytes.length];
-        result[i] = (fileBytes[i] + keyByte) % 256;
-      }
-      return result;
-    }
+        ['dragenter', 'dragover'].forEach(eName => {
+            dropZone.addEventListener(eName, e => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+        });
 
-    function decryptBytes(fileBytes, keyBytes) {
-      const result = new Uint8Array(fileBytes.length);
-      for (let i = 0; i < fileBytes.length; i++) {
-        const keyByte = keyBytes[i % keyBytes.length];
-        result[i] = (fileBytes[i] - keyByte + 256) % 256;
-      }
-      return result;
-    }
+        ['dragleave', 'drop'].forEach(eName => {
+            dropZone.addEventListener(eName, e => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
+        });
 
-    function downloadFile(byteData, fileName) {
-      const blob = new Blob([byteData], { type: "application/octet-stream" });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = fileName;
-      link.click();
-      URL.revokeObjectURL(link.href);
-    }
+        dropZone.addEventListener('drop', e => handleFileSelect(e.dataTransfer.files));
 
-    function resetInputs() {
-      selectedFile = null;
-      document.getElementById('fileInput').value = "";
-      document.getElementById('fileInfo').innerText = "";
-      document.getElementById('secretKey').value = "";
-    }
+        function handleFileSelect(files) {
+            if (files.length > 0) {
+                selectedFile = files[0];
+                document.getElementById('fileInfo').innerText = `تم اختيار: ${selectedFile.name} (${(selectedFile.size / 1024).toFixed(1)} KB)`;
+            }
+        }
 
-    function showStatus(message, type) {
-      const statusDiv = document.getElementById('status');
-      statusDiv.style.display = "block";
-      statusDiv.innerText = message;
-      statusDiv.className = type === "success" ? "status-success" : "status-error";
-    }
+        function generateRandomKey() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+            const randomValues = new Uint8Array(16);
+            window.crypto.getRandomValues(randomValues);
 
-    function clearStatus() {
-      const statusDiv = document.getElementById('status');
-      statusDiv.style.display = "none";
-    }
-  </script>
+            let generatedKey = "";
+            for (let i = 0; i < 16; i++) {
+                generatedKey += chars[randomValues[i] % chars.length];
+            }
+
+            const keyInput = document.getElementById('secretKey');
+            keyInput.value = generatedKey;
+
+            if (keyInput.type === 'password') toggleKeyVisibility();
+            showStatus("تم توليد مفتاح عشوائي جديد. يرجى حفظه لفك التشفير مستقبلاً.", "success");
+        }
+
+        function toggleKeyVisibility() {
+            const keyInput = document.getElementById('secretKey');
+            const eyeIcon = document.getElementById('eyeIcon');
+            const isPass = keyInput.type === 'password';
+
+            keyInput.type = isPass ? 'text' : 'password';
+            eyeIcon.className = isPass ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+        }
+
+        function processFile() {
+            const keyInput = document.getElementById('secretKey').value;
+
+            if (!selectedFile) return showStatus("الرجاء اختيار أو إسقاط ملف أولاً!", "error");
+            if (!keyInput) return showStatus("الرجاء إدخال المفتاح السري!", "error");
+
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(selectedFile);
+
+            reader.onload = function (e) {
+                const fileBytes = new Uint8Array(e.target.result);
+                const keyBytes = new TextEncoder().encode(keyInput);
+
+                const isEncrypt = currentMode === 'encrypt';
+                const resultBytes = transformBytes(fileBytes, keyBytes, isEncrypt);
+                const fileName = isEncrypt
+                    ? "encrypted_" + selectedFile.name
+                    : selectedFile.name.replace(/^encrypted_/, "decrypted_");
+
+                downloadFile(resultBytes, fileName);
+                showStatus(isEncrypt ? "اكتملت عملية التشفير وتحميل الملف بنجاح." : "اكتملت عملية فك التشفير وتحميل الملف الأصلي.", "success");
+                resetInputs();
+            };
+        }
+
+        function transformBytes(fileBytes, keyBytes, isEncrypt) {
+            const result = new Uint8Array(fileBytes.length);
+            for (let i = 0; i < fileBytes.length; i++) {
+                const keyByte = keyBytes[i % keyBytes.length];
+                result[i] = isEncrypt
+                    ? (fileBytes[i] + keyByte) % 256
+                    : (fileBytes[i] - keyByte + 256) % 256;
+            }
+            return result;
+        }
+
+        function downloadFile(byteData, fileName) {
+            const blob = new Blob([byteData], { type: "application/octet-stream" });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function resetInputs() {
+            selectedFile = null;
+            document.getElementById('fileInput').value = "";
+            document.getElementById('fileInfo').innerText = "";
+            document.getElementById('secretKey').value = "";
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.display = "block";
+            statusDiv.innerText = message;
+            statusDiv.className = type === "success" ? "status-success" : "status-error";
+        }
+
+        function clearStatus() {
+            document.getElementById('status').style.display = "none";
+        }
+    </script>
 </body>
+
 </html>
